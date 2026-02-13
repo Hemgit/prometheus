@@ -76,16 +76,16 @@ data "cloudinit_config" "monitoring" {
                 proxy_set_header X-Forwarded-Proto $scheme;
               }
 
-              location /alertmanager/ {
-                proxy_pass http://localhost:9093/;
+              location /prometheus/metrics {
+                proxy_pass http://localhost:9090/metrics;
                 proxy_set_header Host $host;
                 proxy_set_header X-Real-IP $remote_addr;
                 proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
                 proxy_set_header X-Forwarded-Proto $scheme;
               }
 
-              location /metrics/ {
-                proxy_pass http://localhost:9100/;
+              location /node/metrics {
+                proxy_pass http://localhost:9100/metrics;
                 proxy_set_header Host $host;
                 proxy_set_header X-Real-IP $remote_addr;
                 proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
