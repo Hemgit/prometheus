@@ -150,7 +150,7 @@ data "cloudinit_config" "monitoring" {
                 prober: icmp
                 timeout: 5s
           EOT
-        }
+        },
 {
   path = "/etc/prometheus/prometheus.yml"
   content = <<-EOT
