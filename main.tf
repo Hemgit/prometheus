@@ -189,7 +189,7 @@ data "cloudinit_config" "monitoring" {
           - target_label: __address__
             replacement: localhost:9115
   EOT
-}
+},
 ]
 
       runcmd = [
