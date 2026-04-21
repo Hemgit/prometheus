@@ -111,21 +111,39 @@ data "cloudinit_config" "monitoring" {
           EOT
         },
         {
-          path = "/etc/prometheus/rules.yml"
-          content = <<-EOT
-            groups:
-              - name: alert_rules
-                rules:
-                  - alert: InstanceDown
-                    expr: up == 0
-                    for: 1m
-                    labels:
-                      severity: critical
-                    annotations:
-                      summary: 'Instance {{ $labels.instance }} down'
-                      description: '{{ $labels.instance }} of job {{ $labels.job }} has been down for more than 1 minute.'
-          EOT
-        },
+  path = "/etc/prometheus/rules.yml"
+  content = <<-EOT
+    groups:
+      - name: alert_rules
+        rules:
+          - alert: InstanceDown
+            expr: up == 0
+            for: 1m
+            labels:
+              severity: critical
+            annotations:
+              summary: 'Instance {{ $labels.instance }} down'
+              description: '{{ $labels.instance }} of job {{ $labels.job }} has been down for more than 1 minute.'
+
+      - name: blackbox_rules
+        rules:
+          - alert: SSLCertExpiringSoon
+            expr: probe_ssl_earliest_cert_expiry - time() < 86400 * 4
+            for: 1m
+            labels:
+              severity: warning
+            annotations:
+              description: "TLS certificate will expire in {{ $value | humanizeDuration }} (instance {{ $labels.instance }})"
+
+          - alert: EndpointDown
+            expr: probe_success == 0
+            for: 10m
+            labels:
+              severity: "critical"
+            annotations:
+              summary: "Endpoint {{ $labels.instance }} down"
+  EOT
+},
         {
           path = "/etc/prometheus/blackbox.yml"
           content = <<-EOT
